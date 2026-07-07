@@ -1,7 +1,6 @@
 const STORAGE_KEY = 'sprite-tracker-collection';
 
-const spriteGrid = document.getElementById('sprite-grid');
-const variantFilters = document.getElementById('variant-filters');
+const spriteTable = document.getElementById('sprite-table');
 const progressBarFill = document.getElementById('progress-bar-fill');
 const progressCount = document.getElementById('progress-count');
 const progressPercent = document.getElementById('progress-percent');
@@ -17,7 +16,6 @@ const modalSave = document.getElementById('modal-save');
 const modalUnmark = document.getElementById('modal-unmark');
 
 let collection = loadCollection();
-let variantFilter = 'all';
 let statusFilter = 'all';
 let activeCardKey = null;
 
@@ -38,21 +36,9 @@ function cardKey(spriteId, variant) {
   return `${spriteId}::${variant}`;
 }
 
-function buildAllCombos() {
-  const combos = [];
-  SPRITES.forEach((sprite) => {
-    getVariantsFor(sprite.id).forEach((variant) => {
-      combos.push({ sprite, variant, key: cardKey(sprite.id, variant) });
-    });
-  });
-  return combos;
-}
-
-const ALL_COMBOS = buildAllCombos();
-
 // Original placeholder art (simple gradient gem shape, tinted per
 // variant tier) used until a real image exists at the path returned
-// by spriteImageUrl(). No third-party artwork involved.
+// by spriteImageUrl(). No third-party artwork is involved.
 const VARIANT_COLORS = {
   Normal: ['#8a8a99', '#c4c4d1'],
   Gold: ['#caa233', '#ffe27a'],
@@ -77,102 +63,116 @@ function placeholderIconUrl(variant) {
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 
-function renderVariantFilters() {
-  const uniqueVariants = [...new Set(ALL_COMBOS.map((c) => c.variant))];
-  uniqueVariants.forEach((variant) => {
-    const btn = document.createElement('button');
-    btn.className = 'filter-btn';
-    btn.dataset.variant = variant;
-    btn.textContent = variant;
-    btn.addEventListener('click', () => {
-      variantFilter = variant;
-      updateFilterButtons();
-      renderGrid();
-    });
-    variantFilters.appendChild(btn);
-  });
-
-  variantFilters.querySelector('[data-variant="all"]').addEventListener('click', () => {
-    variantFilter = 'all';
-    updateFilterButtons();
-    renderGrid();
-  });
-}
-
-function updateFilterButtons() {
-  variantFilters.querySelectorAll('.filter-btn').forEach((btn) => {
-    btn.classList.toggle('active', btn.dataset.variant === variantFilter);
-  });
-  document.querySelectorAll('[data-status]').forEach((btn) => {
-    btn.classList.toggle('active', btn.dataset.status === statusFilter);
-  });
-}
-
 document.querySelectorAll('[data-status]').forEach((btn) => {
   btn.addEventListener('click', () => {
     statusFilter = btn.dataset.status;
-    updateFilterButtons();
-    renderGrid();
+    document.querySelectorAll('[data-status]').forEach((b) => {
+      b.classList.toggle('active', b.dataset.status === statusFilter);
+    });
+    renderTable();
   });
 });
 
-function passesFilters(combo) {
-  if (variantFilter !== 'all' && combo.variant !== variantFilter) return false;
-
-  const entry = collection[combo.key];
+function cellStatus(spriteId, variant) {
+  const entry = collection[cardKey(spriteId, variant)];
   const owned = Boolean(entry);
   const maxed = owned && entry.level >= MAX_LEVEL;
+  return { entry, owned, maxed };
+}
 
-  if (statusFilter === 'owned' && !owned) return false;
-  if (statusFilter === 'unowned' && owned) return false;
-  if (statusFilter === 'maxed' && !maxed) return false;
-
+function passesFilter({ owned, maxed }) {
+  if (statusFilter === 'owned') return owned;
+  if (statusFilter === 'unowned') return !owned;
+  if (statusFilter === 'maxed') return maxed;
   return true;
 }
 
-function renderGrid() {
-  spriteGrid.innerHTML = '';
+function renderTable() {
+  spriteTable.innerHTML = '';
 
-  ALL_COMBOS.filter(passesFilters).forEach((combo) => {
-    const entry = collection[combo.key];
-    const owned = Boolean(entry);
-    const maxed = owned && entry.level >= MAX_LEVEL;
+  const header = document.createElement('div');
+  header.className = 'table-row table-header-row';
+  header.innerHTML = `
+    <div class="col-sprite-label">SPRITE</div>
+    ${VARIANTS.map((v) => `<div class="col-variant-label">${v.toUpperCase()}</div>`).join('')}
+  `;
+  spriteTable.appendChild(header);
 
-    const card = document.createElement('div');
-    card.className = 'sprite-card' + (owned ? ' owned' : '') + (maxed ? ' maxed' : '');
+  SPRITES.forEach((sprite) => {
+    const row = document.createElement('div');
+    row.className = 'table-row';
 
-    const img = document.createElement('img');
-    img.className = 'sprite-icon-img' + (owned ? ' owned' : '');
-    img.alt = combo.sprite.name;
-    img.src = spriteImageUrl(combo.sprite.id, combo.variant);
-    img.addEventListener(
-      'error',
-      () => {
-        img.src = placeholderIconUrl(combo.variant);
-      },
-      { once: true }
-    );
-    card.appendChild(img);
+    const label = document.createElement('div');
+    label.className = 'sprite-label';
+    label.innerHTML = `<span class="sprite-dot" style="background:${GROUP_COLORS[sprite.group] || '#888'}"></span>${sprite.name}`;
+    row.appendChild(label);
 
-    const textWrap = document.createElement('div');
-    textWrap.innerHTML = `
-      <span class="sprite-name">${combo.sprite.name}</span>
-      <span class="sprite-variant">${combo.variant}</span>
-      ${owned ? `<span class="sprite-level">Lv. ${entry.level}${maxed ? ' (Max)' : ''}</span>` : ''}
-    `;
-    while (textWrap.firstChild) card.appendChild(textWrap.firstChild);
+    const availableVariants = getVariantsFor(sprite.id);
 
-    card.addEventListener('click', () => openModal(combo));
-    spriteGrid.appendChild(card);
+    VARIANTS.forEach((variant) => {
+      if (!availableVariants.includes(variant)) {
+        const naCell = document.createElement('div');
+        naCell.className = 'sprite-cell na';
+        naCell.textContent = '—';
+        row.appendChild(naCell);
+        return;
+      }
+
+      const { entry, owned, maxed } = cellStatus(sprite.id, variant);
+      const matches = passesFilter({ owned, maxed });
+
+      const cell = document.createElement('div');
+      cell.className = 'sprite-cell' + (owned ? ' owned' : '') + (maxed ? ' maxed' : '') + (matches ? '' : ' dimmed');
+
+      const img = document.createElement('img');
+      img.className = 'sprite-icon-img' + (owned ? ' owned' : '');
+      img.alt = `${sprite.name} (${variant})`;
+      img.src = spriteImageUrl(sprite.id, variant);
+      img.addEventListener(
+        'error',
+        () => {
+          img.src = placeholderIconUrl(variant);
+        },
+        { once: true }
+      );
+      cell.appendChild(img);
+
+      if (owned) {
+        const levelTag = document.createElement('span');
+        levelTag.className = 'sprite-level';
+        levelTag.textContent = `Lv. ${entry.level}${maxed ? ' (Max)' : ''}`;
+        cell.appendChild(levelTag);
+      }
+
+      cell.addEventListener('click', () => openModal(sprite, variant));
+      row.appendChild(cell);
+    });
+
+    spriteTable.appendChild(row);
   });
 
   updateProgress();
 }
 
+function buildAllCombos() {
+  const combos = [];
+  SPRITES.forEach((sprite) => {
+    getVariantsFor(sprite.id).forEach((variant) => {
+      combos.push({ spriteId: sprite.id, variant });
+    });
+  });
+  return combos;
+}
+
+const ALL_COMBOS = buildAllCombos();
+
 function updateProgress() {
   const total = ALL_COMBOS.length;
-  const owned = ALL_COMBOS.filter((c) => collection[c.key]).length;
-  const maxed = ALL_COMBOS.filter((c) => collection[c.key] && collection[c.key].level >= MAX_LEVEL).length;
+  const owned = ALL_COMBOS.filter((c) => collection[cardKey(c.spriteId, c.variant)]).length;
+  const maxed = ALL_COMBOS.filter((c) => {
+    const entry = collection[cardKey(c.spriteId, c.variant)];
+    return entry && entry.level >= MAX_LEVEL;
+  }).length;
   const percent = total === 0 ? 0 : Math.round((owned / total) * 100);
 
   progressBarFill.style.width = `${percent}%`;
@@ -181,12 +181,12 @@ function updateProgress() {
   progressMaxed.textContent = `${maxed} maxed`;
 }
 
-function openModal(combo) {
-  activeCardKey = combo.key;
-  const entry = collection[combo.key];
+function openModal(sprite, variant) {
+  activeCardKey = cardKey(sprite.id, variant);
+  const entry = collection[activeCardKey];
 
-  modalTitle.textContent = combo.sprite.name;
-  modalSubtitle.textContent = `${combo.variant} variant`;
+  modalTitle.textContent = sprite.name;
+  modalSubtitle.textContent = `${variant} variant`;
   levelInput.value = entry ? entry.level : 1;
   levelInput.min = 1;
 
@@ -211,7 +211,7 @@ modalSave.addEventListener('click', () => {
   collection[activeCardKey] = { level };
   saveCollection();
   closeModal();
-  renderGrid();
+  renderTable();
 });
 
 modalUnmark.addEventListener('click', () => {
@@ -219,15 +219,14 @@ modalUnmark.addEventListener('click', () => {
   delete collection[activeCardKey];
   saveCollection();
   closeModal();
-  renderGrid();
+  renderTable();
 });
 
 resetBtn.addEventListener('click', () => {
   if (!confirm('Reset your entire sprite collection? This cannot be undone.')) return;
   collection = {};
   saveCollection();
-  renderGrid();
+  renderTable();
 });
 
-renderVariantFilters();
-renderGrid();
+renderTable();

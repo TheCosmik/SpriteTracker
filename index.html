@@ -25,9 +25,6 @@
     </section>
 
     <section class="filters">
-      <div class="filter-group" id="variant-filters">
-        <button class="filter-btn active" data-variant="all">All Variants</button>
-      </div>
       <div class="filter-group">
         <button class="filter-btn active" data-status="all">All</button>
         <button class="filter-btn" data-status="owned">Owned</button>
@@ -37,7 +34,9 @@
       <button id="reset-btn" class="btn-reset">Reset All</button>
     </section>
 
-    <section id="sprite-grid" class="sprite-grid"></section>
+    <section class="sprite-table-wrap">
+      <div id="sprite-table" class="sprite-table"></div>
+    </section>
   </main>
 
   <div id="level-modal" class="modal-overlay hidden">
