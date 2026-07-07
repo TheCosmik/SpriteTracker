@@ -50,6 +50,33 @@ function buildAllCombos() {
 
 const ALL_COMBOS = buildAllCombos();
 
+// Original placeholder art (simple gradient gem shape, tinted per
+// variant tier) used until a real image exists at the path returned
+// by spriteImageUrl(). No third-party artwork involved.
+const VARIANT_COLORS = {
+  Normal: ['#8a8a99', '#c4c4d1'],
+  Gold: ['#caa233', '#ffe27a'],
+  Gummy: ['#d63d8f', '#ff9bcf'],
+  Galaxy: ['#5b3fd6', '#a98bff'],
+  Mythic: ['#c23b1f', '#ff9a5a']
+};
+
+function placeholderIconUrl(variant) {
+  const [c1, c2] = VARIANT_COLORS[variant] || VARIANT_COLORS.Normal;
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="${c1}" />
+          <stop offset="100%" stop-color="${c2}" />
+        </linearGradient>
+      </defs>
+      <polygon points="50,6 88,32 74,88 26,88 12,32" fill="url(#g)" stroke="rgba(255,255,255,0.4)" stroke-width="3"/>
+    </svg>
+  `;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+}
+
 function renderVariantFilters() {
   const uniqueVariants = [...new Set(ALL_COMBOS.map((c) => c.variant))];
   uniqueVariants.forEach((variant) => {
@@ -113,12 +140,28 @@ function renderGrid() {
 
     const card = document.createElement('div');
     card.className = 'sprite-card' + (owned ? ' owned' : '') + (maxed ? ' maxed' : '');
-    card.innerHTML = `
-      <div class="sprite-icon">${combo.sprite.name.charAt(0)}</div>
+
+    const img = document.createElement('img');
+    img.className = 'sprite-icon-img' + (owned ? ' owned' : '');
+    img.alt = combo.sprite.name;
+    img.src = spriteImageUrl(combo.sprite.id, combo.variant);
+    img.addEventListener(
+      'error',
+      () => {
+        img.src = placeholderIconUrl(combo.variant);
+      },
+      { once: true }
+    );
+    card.appendChild(img);
+
+    const textWrap = document.createElement('div');
+    textWrap.innerHTML = `
       <span class="sprite-name">${combo.sprite.name}</span>
       <span class="sprite-variant">${combo.variant}</span>
       ${owned ? `<span class="sprite-level">Lv. ${entry.level}${maxed ? ' (Max)' : ''}</span>` : ''}
     `;
+    while (textWrap.firstChild) card.appendChild(textWrap.firstChild);
+
     card.addEventListener('click', () => openModal(combo));
     spriteGrid.appendChild(card);
   });

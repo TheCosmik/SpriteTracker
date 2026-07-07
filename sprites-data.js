@@ -29,3 +29,13 @@ const MAX_LEVEL = 3;
 function getVariantsFor(spriteId) {
   return MYTHIC_ONLY.includes(spriteId) ? ['Mythic'] : VARIANTS;
 }
+
+// Real per-sprite artwork path. Drop your own images in
+// images/sprites/ named like "striker-normal.png" (spriteId-variant,
+// lowercase) and they'll be used automatically. Until a real file
+// exists at that path, the img's onerror handler swaps in an
+// original placeholder graphic instead (see placeholderIconUrl in
+// app.js) - no third-party artwork is fetched or embedded here.
+function spriteImageUrl(spriteId, variant) {
+  return `images/sprites/${spriteId}-${variant.toLowerCase()}.png`;
+}
