@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sprite Tracker</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="wrap">
+    <header class="header">
+      <h1 class="title">Sprite <span>Tracker</span></h1>
+      <p class="subtitle">Track every sprite variant you own &mdash; and what level it's at.</p>
+    </header>
+
+    <section class="progress-panel">
+      <div class="progress-bar-track">
+        <div id="progress-bar-fill" class="progress-bar-fill"></div>
+      </div>
+      <div class="progress-stats">
+        <span id="progress-count">0 / 0 owned</span>
+        <span id="progress-percent">0%</span>
+        <span id="progress-maxed">0 maxed</span>
+      </div>
+    </section>
+
+    <section class="filters">
+      <div class="filter-group" id="variant-filters">
+        <button class="filter-btn active" data-variant="all">All Variants</button>
+      </div>
+      <div class="filter-group">
+        <button class="filter-btn active" data-status="all">All</button>
+        <button class="filter-btn" data-status="owned">Owned</button>
+        <button class="filter-btn" data-status="unowned">Not Owned</button>
+        <button class="filter-btn" data-status="maxed">Maxed</button>
+      </div>
+      <button id="reset-btn" class="btn-reset">Reset All</button>
+    </section>
+
+    <section id="sprite-grid" class="sprite-grid"></section>
+  </main>
+
+  <div id="level-modal" class="modal-overlay hidden">
+    <div class="modal-panel">
+      <button id="modal-close" class="modal-close" aria-label="Close">&times;</button>
+      <h2 id="modal-title" class="modal-title"></h2>
+      <p id="modal-subtitle" class="modal-subtitle"></p>
+
+      <div class="level-input-row">
+        <label for="level-input">Level</label>
+        <input id="level-input" type="number" min="1" step="1">
+      </div>
+
+      <div class="modal-actions">
+        <button id="modal-save" class="btn-primary">Save</button>
+        <button id="modal-unmark" class="btn-secondary">Mark as Not Owned</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="sprites-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
