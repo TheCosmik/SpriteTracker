@@ -204,13 +204,20 @@ body {
   margin-bottom: 36px;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 10px;
-  max-width: 100%;
-  width: 460px;
-  height: auto;
-  filter: drop-shadow(0 0 30px rgba(199, 125, 255, 0.25));
+.title {
+  margin: 0 0 10px;
+  font-family: 'Baloo 2', 'Segoe UI', sans-serif;
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  text-shadow: 0 0 30px rgba(199, 125, 255, 0.25);
+}
+
+.title span {
+  background: linear-gradient(90deg, #c77dff, #ff9bd6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .subtitle {
