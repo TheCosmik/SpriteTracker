@@ -55,14 +55,14 @@
       <h2 id="modal-title" class="modal-title"></h2>
       <p id="modal-subtitle" class="modal-subtitle"></p>
 
-      <div class="level-input-row">
-        <label for="level-input">Level</label>
-        <input id="level-input" type="number" min="1" step="1">
-      </div>
+      <p class="mastery-question">Have you mastered this sprite? <span class="mastery-lvl">(Lvl 5)</span></p>
 
       <div class="modal-actions">
-        <button id="modal-save" class="btn-primary">Save</button>
-        <button id="modal-unmark" class="btn-secondary">Mark as Not Owned</button>
+        <div class="mastery-buttons">
+          <button id="mastery-yes" class="btn-yes">Yes</button>
+          <button id="mastery-no" class="btn-no">No</button>
+        </div>
+        <button id="modal-unmark" class="btn-secondary hidden">Mark as Not Owned</button>
       </div>
     </div>
   </div>

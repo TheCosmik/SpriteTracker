@@ -11,9 +11,9 @@ const modal = document.getElementById('level-modal');
 const modalIcon = document.getElementById('modal-icon');
 const modalTitle = document.getElementById('modal-title');
 const modalSubtitle = document.getElementById('modal-subtitle');
-const levelInput = document.getElementById('level-input');
 const modalClose = document.getElementById('modal-close');
-const modalSave = document.getElementById('modal-save');
+const masteryYes = document.getElementById('mastery-yes');
+const masteryNo = document.getElementById('mastery-no');
 const modalUnmark = document.getElementById('modal-unmark');
 
 const GROUP_LABELS = {
@@ -48,6 +48,7 @@ function cardKey(spriteId, variant) {
 // variant tier) used until a real image exists at the path returned
 // by spriteImageUrl(). No third-party artwork is involved.
 const VARIANT_COLORS = {
+  Holofoil: ['#6ee7ff', '#ff9bec'],
   Normal: ['#8a8a99', '#c4c4d1'],
   Gold: ['#caa233', '#ffe27a'],
   Gummy: ['#d63d8f', '#ff9bcf'],
@@ -102,7 +103,7 @@ function renderTable() {
   header.className = 'table-row table-header-row';
   header.innerHTML = `
     <div class="col-sprite-label">SPRITE</div>
-    ${VARIANTS.map((v) => `<div class="col-variant-label">${v.toUpperCase()}</div>`).join('')}
+    ${VARIANTS.map((v) => `<div class="col-variant-label${v === 'Holofoil' ? ' holofoil-label' : ''}">${v.toUpperCase()}</div>`).join('')}
   `;
   spriteTable.appendChild(header);
 
@@ -214,12 +215,13 @@ function openModal(sprite, variant) {
   modalIcon.style.setProperty('--modal-icon-color', GROUP_COLORS[sprite.group] || '#c77dff');
   modalTitle.textContent = sprite.name;
   modalSubtitle.textContent = `${variant} variant`;
-  levelInput.value = entry ? entry.level : 1;
-  levelInput.min = 1;
+
+  const mastered = Boolean(entry && entry.level >= MAX_LEVEL);
+  masteryYes.classList.toggle('active', mastered);
+  masteryNo.classList.toggle('active', Boolean(entry) && !mastered);
 
   modalUnmark.classList.toggle('hidden', !entry);
   modal.classList.remove('hidden');
-  levelInput.focus();
 }
 
 function closeModal() {
@@ -232,10 +234,17 @@ modal.addEventListener('click', (e) => {
   if (e.target === modal) closeModal();
 });
 
-modalSave.addEventListener('click', () => {
+masteryYes.addEventListener('click', () => {
   if (!activeCardKey) return;
-  const level = Math.max(1, parseInt(levelInput.value, 10) || 1);
-  collection[activeCardKey] = { level };
+  collection[activeCardKey] = { level: MAX_LEVEL };
+  saveCollection();
+  closeModal();
+  renderTable();
+});
+
+masteryNo.addEventListener('click', () => {
+  if (!activeCardKey) return;
+  collection[activeCardKey] = { level: 1 };
   saveCollection();
   closeModal();
   renderTable();
