@@ -47,24 +47,32 @@ body {
   background: radial-gradient(circle, rgba(255, 140, 90, 0.14), transparent 70%);
 }
 
-.layout {
+.page {
   position: relative;
   z-index: 1;
-  display: flex;
-  align-items: flex-start;
-  gap: 28px;
   max-width: 1280px;
   margin: 0 auto;
   padding: 56px 20px 80px;
 }
 
+.collection-banner {
+  margin-bottom: 28px;
+}
+
+.layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 28px;
+}
+
 .sidebar {
-  flex: 0 0 240px;
+  flex: 0 0 360px;
   position: sticky;
   top: 24px;
+  margin-top: 165px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
 }
 
 .sidebar-panel {
@@ -147,6 +155,41 @@ body {
 .progress-bar-track.small {
   height: 8px;
   border-radius: 6px;
+}
+
+/* Mastered + Rarity panels run ~50% bigger than the base sidebar
+   styles above (which the full-width collection banner still uses). */
+.sidebar .sidebar-panel {
+  padding: 24px 27px;
+}
+
+.sidebar .sidebar-label {
+  font-size: 18px;
+}
+
+.sidebar .sidebar-count {
+  font-size: 18px;
+}
+
+.sidebar .sidebar-subtext {
+  font-size: 16px;
+}
+
+.sidebar .rarity-heading {
+  margin-bottom: 18px;
+}
+
+.sidebar .rarity-row {
+  margin-bottom: 21px;
+}
+
+.sidebar .rarity-name {
+  font-size: 20px;
+}
+
+.sidebar .progress-bar-track.small {
+  height: 12px;
+  border-radius: 8px;
 }
 
 .wrap {
@@ -577,7 +620,7 @@ body {
   background: rgba(255, 100, 110, 0.18);
 }
 
-@media (max-width: 840px) {
+@media (max-width: 980px) {
   .layout {
     flex-direction: column;
   }

@@ -14,18 +14,19 @@
   <div class="bg-glow bg-glow-2"></div>
   <div class="bg-glow bg-glow-3"></div>
 
-  <div class="layout">
-    <aside class="sidebar">
-      <div class="sidebar-panel">
-        <div class="sidebar-row-top">
-          <span class="sidebar-label">Collection</span>
-          <span id="side-collection-count" class="sidebar-count">0 / 0</span>
-        </div>
-        <div class="progress-bar-track small">
-          <div id="side-collection-fill" class="progress-bar-fill"></div>
-        </div>
+  <div class="page">
+    <section class="collection-banner sidebar-panel">
+      <div class="sidebar-row-top">
+        <span class="sidebar-label">Collection</span>
+        <span id="side-collection-count" class="sidebar-count">0 / 0</span>
       </div>
+      <div class="progress-bar-track">
+        <div id="side-collection-fill" class="progress-bar-fill"></div>
+      </div>
+    </section>
 
+    <div class="layout">
+    <aside class="sidebar">
       <div class="sidebar-panel mastered-panel">
         <div class="sidebar-row-top">
           <span class="sidebar-label mastered-label">&#127942; Mastered</span>
@@ -98,6 +99,7 @@
         <div id="sprite-table" class="sprite-table"></div>
       </section>
     </main>
+    </div>
   </div>
 
   <div id="level-modal" class="modal-overlay hidden">
