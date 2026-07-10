@@ -47,12 +47,113 @@ body {
   background: radial-gradient(circle, rgba(255, 140, 90, 0.14), transparent 70%);
 }
 
+.layout {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 28px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 56px 20px 80px;
+}
+
+.sidebar {
+  flex: 0 0 240px;
+  position: sticky;
+  top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sidebar-panel {
+  padding: 16px 18px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(199, 125, 255, 0.22);
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+
+.sidebar-row-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.sidebar-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(241, 237, 255, 0.6);
+}
+
+.sidebar-count {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(241, 237, 255, 0.85);
+}
+
+.mastered-label {
+  color: #ffc35a;
+}
+
+.progress-bar-fill.mastered-fill {
+  background: linear-gradient(90deg, #d99a2b, #ffc35a);
+  box-shadow: 0 0 12px rgba(255, 195, 90, 0.6);
+}
+
+.sidebar-subtext {
+  margin-top: 8px;
+  font-size: 11px;
+  color: rgba(241, 237, 255, 0.5);
+}
+
+.sidebar-subtext span {
+  color: #ffc35a;
+  font-weight: 700;
+}
+
+.rarity-heading {
+  margin-bottom: 12px;
+}
+
+.rarity-row {
+  --rarity-color: #c77dff;
+  margin-bottom: 14px;
+}
+
+.rarity-row:last-child {
+  margin-bottom: 0;
+}
+
+.rarity-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--rarity-color);
+}
+
+.rarity-count {
+  color: rgba(241, 237, 255, 0.6);
+}
+
+.progress-bar-fill.rarity-fill {
+  background: var(--rarity-color);
+  box-shadow: 0 0 10px var(--rarity-color);
+}
+
+.progress-bar-track.small {
+  height: 8px;
+  border-radius: 6px;
+}
+
 .wrap {
   position: relative;
   z-index: 1;
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 56px 20px 80px;
+  flex: 1;
+  min-width: 0;
 }
 
 .header {
@@ -80,48 +181,6 @@ body {
   margin: 0;
   color: rgba(241, 237, 255, 0.6);
   font-size: 14px;
-}
-
-.progress-panel {
-  position: relative;
-  z-index: 1;
-  margin-bottom: 28px;
-  padding: 20px 22px;
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(199, 125, 255, 0.22);
-  border-radius: 18px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
-}
-
-.progress-top {
-  display: flex;
-  align-items: baseline;
-  gap: 16px;
-  margin-bottom: 14px;
-}
-
-.progress-percent-big {
-  font-family: 'Baloo 2', sans-serif;
-  font-size: 32px;
-  font-weight: 700;
-  background: linear-gradient(90deg, #c77dff, #ff9bd6);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  line-height: 1;
-}
-
-.progress-labels {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  font-size: 13px;
-  color: rgba(241, 237, 255, 0.65);
-}
-
-#progress-maxed {
-  color: #ffc35a;
-  font-weight: 600;
 }
 
 .progress-bar-track {
@@ -516,4 +575,22 @@ body {
 
 .btn-secondary:hover {
   background: rgba(255, 100, 110, 0.18);
+}
+
+@media (max-width: 840px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    flex: 1 1 auto;
+    position: static;
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .sidebar-panel {
+    flex: 1 1 220px;
+  }
 }

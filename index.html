@@ -14,39 +14,91 @@
   <div class="bg-glow bg-glow-2"></div>
   <div class="bg-glow bg-glow-3"></div>
 
-  <main class="wrap">
-    <header class="header">
-      <h1 class="title">Sprite <span>Tracker</span></h1>
-      <p class="subtitle">Track every sprite variant you own &mdash; and what level it's at.</p>
-    </header>
-
-    <section class="progress-panel">
-      <div class="progress-top">
-        <span id="progress-percent" class="progress-percent-big">0%</span>
-        <div class="progress-labels">
-          <span id="progress-count">0 / 0 owned</span>
-          <span id="progress-maxed">0 maxed</span>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-panel">
+        <div class="sidebar-row-top">
+          <span class="sidebar-label">Collection</span>
+          <span id="side-collection-count" class="sidebar-count">0 / 0</span>
+        </div>
+        <div class="progress-bar-track small">
+          <div id="side-collection-fill" class="progress-bar-fill"></div>
         </div>
       </div>
-      <div class="progress-bar-track">
-        <div id="progress-bar-fill" class="progress-bar-fill"></div>
-      </div>
-    </section>
 
-    <section class="filters">
-      <div class="filter-group">
-        <button class="filter-btn active" data-status="all">All</button>
-        <button class="filter-btn" data-status="owned">Owned</button>
-        <button class="filter-btn" data-status="unowned">Not Owned</button>
-        <button class="filter-btn" data-status="maxed">Maxed</button>
+      <div class="sidebar-panel mastered-panel">
+        <div class="sidebar-row-top">
+          <span class="sidebar-label mastered-label">&#127942; Mastered</span>
+          <span id="side-mastered-count" class="sidebar-count">0 / 0</span>
+        </div>
+        <div class="progress-bar-track small">
+          <div id="side-mastered-fill" class="progress-bar-fill mastered-fill"></div>
+        </div>
+        <div class="sidebar-subtext"><span id="side-mastered-percent">0%</span> of owned</div>
       </div>
-      <button id="reset-btn" class="btn-reset">Reset All</button>
-    </section>
 
-    <section class="sprite-table-wrap">
-      <div id="sprite-table" class="sprite-table"></div>
-    </section>
-  </main>
+      <div class="sidebar-panel">
+        <div class="sidebar-label rarity-heading">Rarity</div>
+        <div class="rarity-row" data-group="blue">
+          <div class="sidebar-row-top">
+            <span class="rarity-name">Rare</span>
+            <span class="sidebar-count rarity-count">0 / 0</span>
+          </div>
+          <div class="progress-bar-track small">
+            <div class="progress-bar-fill rarity-fill"></div>
+          </div>
+        </div>
+        <div class="rarity-row" data-group="purple">
+          <div class="sidebar-row-top">
+            <span class="rarity-name">Epic</span>
+            <span class="sidebar-count rarity-count">0 / 0</span>
+          </div>
+          <div class="progress-bar-track small">
+            <div class="progress-bar-fill rarity-fill"></div>
+          </div>
+        </div>
+        <div class="rarity-row" data-group="orange">
+          <div class="sidebar-row-top">
+            <span class="rarity-name">Legendary</span>
+            <span class="sidebar-count rarity-count">0 / 0</span>
+          </div>
+          <div class="progress-bar-track small">
+            <div class="progress-bar-fill rarity-fill"></div>
+          </div>
+        </div>
+        <div class="rarity-row" data-group="red">
+          <div class="sidebar-row-top">
+            <span class="rarity-name">Mythic</span>
+            <span class="sidebar-count rarity-count">0 / 0</span>
+          </div>
+          <div class="progress-bar-track small">
+            <div class="progress-bar-fill rarity-fill"></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="wrap">
+      <header class="header">
+        <h1 class="title">Sprite <span>Tracker</span></h1>
+        <p class="subtitle">Track every sprite variant you own &mdash; and what level it's at.</p>
+      </header>
+
+      <section class="filters">
+        <div class="filter-group">
+          <button class="filter-btn active" data-status="all">All</button>
+          <button class="filter-btn" data-status="owned">Owned</button>
+          <button class="filter-btn" data-status="unowned">Not Owned</button>
+          <button class="filter-btn" data-status="maxed">Maxed</button>
+        </div>
+        <button id="reset-btn" class="btn-reset">Reset All</button>
+      </section>
+
+      <section class="sprite-table-wrap">
+        <div id="sprite-table" class="sprite-table"></div>
+      </section>
+    </main>
+  </div>
 
   <div id="level-modal" class="modal-overlay hidden">
     <div class="modal-panel">

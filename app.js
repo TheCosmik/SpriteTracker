@@ -1,10 +1,12 @@
 const STORAGE_KEY = 'sprite-tracker-collection';
 
 const spriteTable = document.getElementById('sprite-table');
-const progressBarFill = document.getElementById('progress-bar-fill');
-const progressCount = document.getElementById('progress-count');
-const progressPercent = document.getElementById('progress-percent');
-const progressMaxed = document.getElementById('progress-maxed');
+const sideCollectionFill = document.getElementById('side-collection-fill');
+const sideCollectionCount = document.getElementById('side-collection-count');
+const sideMasteredFill = document.getElementById('side-mastered-fill');
+const sideMasteredCount = document.getElementById('side-mastered-count');
+const sideMasteredPercent = document.getElementById('side-mastered-percent');
+const rarityRows = document.querySelectorAll('.rarity-row');
 const resetBtn = document.getElementById('reset-btn');
 
 const modal = document.getElementById('level-modal');
@@ -17,10 +19,10 @@ const masteryNo = document.getElementById('mastery-no');
 const modalUnmark = document.getElementById('modal-unmark');
 
 const GROUP_LABELS = {
-  blue: 'Blue Tier',
-  purple: 'Purple Tier',
-  orange: 'Orange Tier',
-  red: 'Red Tier'
+  blue: 'Rare',
+  purple: 'Epic',
+  orange: 'Legendary',
+  red: 'Mythic'
 };
 
 let collection = loadCollection();
@@ -179,7 +181,7 @@ function buildAllCombos() {
   const combos = [];
   SPRITES.forEach((sprite) => {
     getVariantsFor(sprite.id).forEach((variant) => {
-      combos.push({ spriteId: sprite.id, variant });
+      combos.push({ spriteId: sprite.id, variant, group: sprite.group });
     });
   });
   return combos;
@@ -187,19 +189,41 @@ function buildAllCombos() {
 
 const ALL_COMBOS = buildAllCombos();
 
+function isOwned(c) {
+  return Boolean(collection[cardKey(c.spriteId, c.variant)]);
+}
+
+function isMastered(c) {
+  const entry = collection[cardKey(c.spriteId, c.variant)];
+  return Boolean(entry && entry.level >= MAX_LEVEL);
+}
+
 function updateProgress() {
   const total = ALL_COMBOS.length;
-  const owned = ALL_COMBOS.filter((c) => collection[cardKey(c.spriteId, c.variant)]).length;
-  const maxed = ALL_COMBOS.filter((c) => {
-    const entry = collection[cardKey(c.spriteId, c.variant)];
-    return entry && entry.level >= MAX_LEVEL;
-  }).length;
+  const owned = ALL_COMBOS.filter(isOwned).length;
+  const mastered = ALL_COMBOS.filter(isMastered).length;
   const percent = total === 0 ? 0 : Math.round((owned / total) * 100);
+  const masteredOfTotal = total === 0 ? 0 : Math.round((mastered / total) * 100);
+  const masteredOfOwned = owned === 0 ? 0 : Math.round((mastered / owned) * 100);
 
-  progressBarFill.style.width = `${percent}%`;
-  progressCount.textContent = `${owned} / ${total} owned`;
-  progressPercent.textContent = `${percent}%`;
-  progressMaxed.textContent = `${maxed} maxed`;
+  sideCollectionFill.style.width = `${percent}%`;
+  sideCollectionCount.textContent = `${owned} / ${total}`;
+
+  sideMasteredFill.style.width = `${masteredOfTotal}%`;
+  sideMasteredCount.textContent = `${mastered} / ${total}`;
+  sideMasteredPercent.textContent = `${masteredOfOwned}%`;
+
+  rarityRows.forEach((row) => {
+    const group = row.dataset.group;
+    const groupCombos = ALL_COMBOS.filter((c) => c.group === group);
+    const groupTotal = groupCombos.length;
+    const groupOwned = groupCombos.filter(isOwned).length;
+    const groupPercent = groupTotal === 0 ? 0 : Math.round((groupOwned / groupTotal) * 100);
+
+    row.style.setProperty('--rarity-color', GROUP_COLORS[group] || '#888');
+    row.querySelector('.rarity-fill').style.width = `${groupPercent}%`;
+    row.querySelector('.rarity-count').textContent = `${groupOwned} / ${groupTotal}`;
+  });
 }
 
 function openModal(sprite, variant) {
