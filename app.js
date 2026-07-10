@@ -8,12 +8,20 @@ const progressMaxed = document.getElementById('progress-maxed');
 const resetBtn = document.getElementById('reset-btn');
 
 const modal = document.getElementById('level-modal');
+const modalIcon = document.getElementById('modal-icon');
 const modalTitle = document.getElementById('modal-title');
 const modalSubtitle = document.getElementById('modal-subtitle');
 const levelInput = document.getElementById('level-input');
 const modalClose = document.getElementById('modal-close');
 const modalSave = document.getElementById('modal-save');
 const modalUnmark = document.getElementById('modal-unmark');
+
+const GROUP_LABELS = {
+  blue: 'Blue Tier',
+  purple: 'Purple Tier',
+  orange: 'Orange Tier',
+  red: 'Red Tier'
+};
 
 let collection = loadCollection();
 let statusFilter = 'all';
@@ -98,7 +106,18 @@ function renderTable() {
   `;
   spriteTable.appendChild(header);
 
+  let currentGroup = null;
+
   SPRITES.forEach((sprite) => {
+    if (sprite.group !== currentGroup) {
+      currentGroup = sprite.group;
+      const groupHeader = document.createElement('div');
+      groupHeader.className = 'group-header';
+      groupHeader.style.setProperty('--group-color', GROUP_COLORS[currentGroup] || '#888');
+      groupHeader.innerHTML = `<span class="group-header-bar"></span>${GROUP_LABELS[currentGroup] || currentGroup}`;
+      spriteTable.appendChild(groupHeader);
+    }
+
     const row = document.createElement('div');
     row.className = 'table-row';
 
@@ -123,6 +142,7 @@ function renderTable() {
 
       const cell = document.createElement('div');
       cell.className = 'sprite-cell' + (owned ? ' owned' : '') + (maxed ? ' maxed' : '') + (matches ? '' : ' dimmed');
+      cell.style.setProperty('--cell-color', GROUP_COLORS[sprite.group] || '#c77dff');
 
       const img = document.createElement('img');
       img.className = 'sprite-icon-img' + (owned ? ' owned' : '');
@@ -185,6 +205,13 @@ function openModal(sprite, variant) {
   activeCardKey = cardKey(sprite.id, variant);
   const entry = collection[activeCardKey];
 
+  modalIcon.src = spriteImageUrl(sprite.id, variant);
+  modalIcon.alt = `${sprite.name} (${variant})`;
+  modalIcon.onerror = () => {
+    modalIcon.onerror = null;
+    modalIcon.src = placeholderIconUrl(variant);
+  };
+  modalIcon.style.setProperty('--modal-icon-color', GROUP_COLORS[sprite.group] || '#c77dff');
   modalTitle.textContent = sprite.name;
   modalSubtitle.textContent = `${variant} variant`;
   levelInput.value = entry ? entry.level : 1;
