@@ -25,7 +25,7 @@ const SPRITES = [
 // above) if it only has some of them. Holofoil art is pending -
 // until images/sprites/<id>-holofoil.webp exists for a sprite, the
 // cell falls back to the placeholder graphic.
-const VARIANTS = ['Holofoil', 'Normal', 'Gold', 'Gummy', 'Galaxy'];
+const VARIANTS = ['Normal', 'Gold', 'Gummy', 'Galaxy', 'Holofoil'];
 
 const GROUP_COLORS = {
   blue: '#3fa9ff',
